@@ -1,7 +1,8 @@
 import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
-import { sum } from "../core/math";
+
+import getConnection from "./db/connection";
 
 const buildDir = path.join(`${process.cwd()}/build`);
 const app = express();
@@ -13,9 +14,8 @@ app.use(
 );
 app.use(express.static(buildDir));
 
-app.get("/ping", (req, res) => {
-  return res.json(`${sum(10, 4)}`);
-});
+// try to connect to DB
+getConnection();
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(buildDir, "index.html"));
