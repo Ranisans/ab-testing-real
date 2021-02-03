@@ -1,0 +1,14 @@
+.input {
+
+  &-field {
+    & input {
+      height: 28px;
+
+      border: none;
+      border-radius: 20px;
+      outline: 0;
+      background: #fff;
+      text-align: center
+    }
+  }
+}
