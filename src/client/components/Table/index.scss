@@ -1,0 +1,52 @@
+@import "src/client/components/constant";
+$borderColor: rgba(93, 110, 151, 0.4);
+
+.table {
+  display: grid;
+  overflow: hidden;
+
+  box-sizing: border-box;
+  width: 770px;
+  height: 500px;
+
+  border-radius: 10px;
+  box-shadow: 4px 0 10px rgba(93, 109, 151, 0.1);
+
+  grid-template-rows: auto 1fr;
+
+  &-row {
+    display: grid;
+
+    box-sizing: border-box;
+
+    color: #5d6d97;
+
+    grid-template-columns: repeat(3, 1fr);
+    & > div {
+      overflow: hidden;
+
+      box-sizing: border-box;
+
+      border-bottom: 1px solid $borderColor;
+
+      word-wrap: break-word;
+    };
+  }
+
+  &-cell {
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+    text-align: center;
+    word-wrap: break-word;
+  }
+
+  &-header_cell {
+    height: $headerHeight;
+  }
+
+  &-body_cell {
+    height: $cellHeight;
+  }
+}
