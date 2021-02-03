@@ -23,4 +23,5 @@ export interface IRowData {
 
 export interface ITableData {
   data: IRowData[];
+  className?: string;
 }

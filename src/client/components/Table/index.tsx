@@ -7,7 +7,7 @@ import { TABLE_COLUMN } from "../../constants";
 
 import "./index.scss";
 
-const Table: React.FC<ITableData> = ({ data }: ITableData) => {
+const Table: React.FC<ITableData> = ({ data, className = "" }: ITableData) => {
   const Header = ({ headerMargin }: IHeader) => {
     return (
       <div className="table-row" style={{ paddingRight: headerMargin }}>
@@ -41,7 +41,7 @@ const Table: React.FC<ITableData> = ({ data }: ITableData) => {
   return (
     <VirtualTable
       Header={Header}
-      containerClassName="table"
+      containerClassName={clsx("table", className)}
       itemCount={data.length}
       Row={Row}
     />

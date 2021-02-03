@@ -1,0 +1,61 @@
+@import "components/constant";
+
+h1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  overflow: hidden;
+
+  width: 1px;
+  height: 1px;
+}
+
+.app {
+  width: max-content;
+  margin: 0 auto;
+  padding-top: 50px;
+
+  &-table {
+    margin: 0 auto;
+  }
+
+  &_block {
+    display: flex;
+    align-items: center;
+
+    margin-top: 20px;
+
+    gap: 20px;
+
+    & label {
+      color: $textColor;
+
+      size: 14px;
+    }
+
+    &-rolling-retention {
+      width: 50px;
+
+      color: $textColor;
+      border-radius: 20px;
+
+      text-align: center;
+    }
+  }
+
+  &-input_block {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+  }
+
+  .user_button {
+    width: 90px;
+  }
+
+  .calculate_button {
+    width: 100px;
+  }
+}

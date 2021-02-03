@@ -1,8 +1,10 @@
+@import "src/client/components/constant";
+
 .input {
 
   &-field {
     & input {
-      height: 28px;
+      height: $inputHeight;
 
       border: none;
       border-radius: 20px;
