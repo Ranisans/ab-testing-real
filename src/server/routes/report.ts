@@ -19,14 +19,11 @@ router.get(
       const conn = getConnection();
       const sql =
         "SELECT (SELECT COUNT(*) FROM user WHERE lastActivityDate >= ?) / (SELECT COUNT(*) FROM user WHERE registrationDate <= ?) * 100 as result";
-      console.log(sql);
       conn.query(sql, [date, date], (error, result) => {
         if (error) throw error;
-        console.log(result);
         res.send({ data: result[0].result }).status(HttpStatus.OK);
       });
     } catch (error) {
-      console.log(error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR) });

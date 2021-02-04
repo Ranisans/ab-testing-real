@@ -6,12 +6,11 @@ let connection: Connection;
 
 const getConnection = (): Connection => {
   if (!connection) {
-    const { HOST, USERNAME, PASSWORD, DB_NAME } = process.env;
-    console.log(HOST, USERNAME, PASSWORD, DB_NAME);
+    const { DD_HOST, DD_USERNAME, DD_PASSWORD, DB_NAME } = process.env;
     connection = createConnection({
-      host: HOST,
-      user: USERNAME,
-      password: PASSWORD,
+      host: DD_HOST,
+      user: DD_USERNAME,
+      password: DD_PASSWORD,
       database: DB_NAME,
     });
 
