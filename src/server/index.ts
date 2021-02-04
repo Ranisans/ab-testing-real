@@ -27,7 +27,8 @@ app.get("/*", (req, res) => {
   res.sendFile(path.join(buildDir, "index.html"));
 });
 
-const port = 3001;
+const defaultPort = 3001;
+const port = process.env.PORT || defaultPort;
 console.log("checking port", port);
 app.listen(port, () => {
   console.log(`Server now listening on port: ${port}`);
