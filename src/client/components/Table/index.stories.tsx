@@ -2,18 +2,12 @@ import React from "react";
 
 import Table from "./index";
 import { IRowData } from "../../types";
+import convertDate from "../../../core/dateConverter";
 
 export default {
   title: "Table",
   component: Table,
 };
-
-function convertDate(d: Date) {
-  function pad(s: number) {
-    return s < 10 ? `0${s}` : s;
-  }
-  return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join(".");
-}
 
 export const Base: React.FC = () => {
   const date = convertDate(new Date());

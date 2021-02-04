@@ -2,6 +2,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import path from "path";
 
+import userRouter from "./routes/user";
+import reportRouter from "./routes/report";
+
 import getConnection from "./db/connection";
 
 const buildDir = path.join(`${process.cwd()}/build`);
@@ -16,6 +19,9 @@ app.use(express.static(buildDir));
 
 // try to connect to DB
 getConnection();
+
+app.use("/user", userRouter);
+app.use("/report", reportRouter);
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(buildDir, "index.html"));
