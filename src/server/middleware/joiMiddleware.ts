@@ -2,9 +2,9 @@ import HttpStatus from "http-status-codes";
 import Joi, { Schema } from "joi";
 import { Request, Response, NextFunction } from "express";
 
-const middleware = (schema: Schema) => {
+const middleware = (schema: Schema, query?: boolean) => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const { error } = schema.validate(req.body, {
+    const { error } = schema.validate(req[query ? "query" : "body"], {
       abortEarly: false,
       allowUnknown: true,
     });

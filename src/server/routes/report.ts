@@ -11,11 +11,11 @@ const router = Router();
 
 router.get(
   "/rolling",
-  joiMiddleware(getRollingReportSchema),
+  joiMiddleware(getRollingReportSchema, true),
   async (req, res) => {
     try {
-      const { date: strDate } = req.body;
-      const date = convertDate(new Date(strDate), true);
+      const { date: strDate } = req.query;
+      const date = convertDate(new Date(strDate as string), true);
       const conn = getConnection();
       const sql =
         "SELECT (SELECT COUNT(*) FROM user WHERE lastActivityDate >= ?) / (SELECT COUNT(*) FROM user WHERE registrationDate <= ?) * 100 as result";

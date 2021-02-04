@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+
 import React, { useEffect, useState } from "react";
 import { StatusCodes } from "http-status-codes";
 
@@ -26,7 +28,8 @@ const newUserInitialDate: INewRecord = {
 
 const App: React.FC = () => {
   const [userData, setUserData] = useState<INewRecord>(newUserInitialDate);
-  const [rollingRetention, setRollingRetention] = useState(0);
+  const [rollingRetention, setRollingRetention] = useState("");
+  const [retentionDay, setRelationDay] = useState(new Date());
   const [tableData, setTableData] = useState<IRowData[]>([]);
   const [showError, setShowError] = useState(false);
   const [errorText, setErrorText] = useState("");
@@ -83,8 +86,18 @@ const App: React.FC = () => {
     }
   };
 
-  const handleCalculate = () => {
-    setRollingRetention(12);
+  const handleCalculate = async () => {
+    const result = await fetch(
+      `/report/rolling?date=${retentionDay.toISOString()}`
+    );
+    if (result.status === StatusCodes.OK) {
+      const newData = await result.json();
+      const data = parseFloat(newData.data).toFixed(2);
+      setRollingRetention(data);
+    } else {
+      setErrorText("Server Error!");
+      handleError();
+    }
   };
 
   return (
@@ -94,12 +107,10 @@ const App: React.FC = () => {
         <Table data={tableData} className="app-table" />
         <div className="app_block">
           <div className="app-input_block">
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label>Date Registration</label>
             <DateInput onChange={handleChange(EDate.REGISTRATION)} />
           </div>
           <div className="app-input_block">
-            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
             <label>Date Last Activity</label>
             <DateInput onChange={handleChange(EDate.ACTIVITY)} />
           </div>
@@ -110,9 +121,10 @@ const App: React.FC = () => {
           />
         </div>
         <div className="app_block">
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label>Rolling Retention X day:</label>
           <p className="app_block-rolling-retention">{rollingRetention}</p>
+          <label>Date:</label>
+          <DateInput onChange={setRelationDay} />
           <Button
             onClick={handleCalculate}
             className="calculate_button"
