@@ -1,9 +1,11 @@
 import { Router } from "express";
 import HttpStatus, { StatusCodes, getReasonPhrase } from "http-status-codes";
+import util from "util";
 
-import joiMiddleware, { createUserSchema } from "../middleware/joiMiddleware";
+import joiMiddleware, { createUsersSchema } from "../middleware/joiMiddleware";
 import getConnection from "../db/connection";
 import convertDate from "../../core/dateConverter";
+import { IUserData } from "../../core/interfaces";
 
 const router = Router();
 
@@ -13,12 +15,18 @@ interface IDBUserRecord {
   lastActivityDate: Date;
 }
 
-router.post("/", joiMiddleware(createUserSchema), async (req, res) => {
+router.post("/", joiMiddleware(createUsersSchema), async (req, res) => {
   try {
-    const { registrationDate, lastActivityDate } = req.body;
+    const { data } = req.body;
     const conn = getConnection();
-    const sql = `INSERT INTO user (registrationDate, lastActivityDate) VALUES ('${registrationDate}', '${lastActivityDate}')`;
-    await conn.query(sql);
+    const query = util.promisify(conn.query).bind(conn);
+    const promises = data.map((userData: IUserData) => {
+      const sql = `INSERT INTO user (registrationDate, lastActivityDate) VALUES ('${userData.registrationDate}', '${userData.lastActivityDate}')`;
+      return query(sql);
+    });
+
+    await Promise.all(promises);
+
     res.sendStatus(HttpStatus.OK);
   } catch (error) {
     res

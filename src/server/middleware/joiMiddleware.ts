@@ -22,9 +22,13 @@ const middleware = (schema: Schema, query?: boolean) => {
   };
 };
 
-export const createUserSchema = Joi.object({
+const user = Joi.object().keys({
   registrationDate: Joi.date().required(),
   lastActivityDate: Joi.date().min(Joi.ref("registrationDate")).required(),
+});
+
+export const createUsersSchema = Joi.object({
+  data: Joi.array().items(user),
 });
 
 export const getRollingReportSchema = Joi.object({
