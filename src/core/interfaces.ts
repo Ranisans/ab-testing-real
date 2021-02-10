@@ -1,4 +1,4 @@
 export interface IUserData {
-  dateRegistration: Date;
-  dateActivity: Date;
+  registrationDate: Date;
+  lastActivityDate: Date;
 }

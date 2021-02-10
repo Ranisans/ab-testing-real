@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { StatusCodes } from "http-status-codes";
+import { useSelector, useDispatch } from "react-redux";
+import clsx from "clsx";
 
 import Table from "./components/Table";
 import { DateInput } from "./components/Input";
@@ -10,24 +12,14 @@ import ErrorWindow from "./components/ErrorWindow";
 import { IRowData } from "./types";
 
 import "./App.scss";
-
-enum EDate {
-  REGISTRATION,
-  ACTIVITY,
-}
-
-interface INewRecord {
-  registrationDate: Date;
-  lastActivityDate: Date;
-}
-
-const newUserInitialDate: INewRecord = {
-  registrationDate: new Date(),
-  lastActivityDate: new Date(),
-};
+import { MAX_NEW_USER } from "./constants";
+import UserBlock from "./components/UserBlock";
+import { reset } from "./store/usersData";
+import { AppState } from "./store";
 
 const App: React.FC = () => {
-  const [userData, setUserData] = useState<INewRecord>(newUserInitialDate);
+  const dispatch = useDispatch();
+  const usersData = useSelector((state: AppState) => state.usersDataState);
   const [rollingRetention, setRollingRetention] = useState("");
   const [retentionDay, setRelationDay] = useState(new Date());
   const [tableData, setTableData] = useState<IRowData[]>([]);
@@ -51,38 +43,41 @@ const App: React.FC = () => {
 
   useEffect(() => {
     updateData();
+    dispatch(reset());
   }, []);
 
-  const handleChange = (key: EDate) => (date: Date) => {
-    if (key === EDate.REGISTRATION) {
-      setUserData({ ...userData, registrationDate: date });
-    } else {
-      setUserData({ ...userData, lastActivityDate: date });
-    }
-  };
-
   const handleSetUser = async () => {
-    if (userData.registrationDate > userData.lastActivityDate) {
-      setErrorText("Wrong User date!");
-      handleError();
-    } else {
+    // check if registration date is greater than activity date
+    for (let i = 0; i < usersData.length; i += 1) {
+      if (usersData[i].registrationDate > usersData[i].lastActivityDate) {
+        setErrorText(`Wrong User date on position = ${i} !`);
+        handleError();
+        return;
+      }
+    }
+
+    try {
       const result = await fetch("/user", {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify(userData),
+        body: JSON.stringify({ data: usersData }),
       });
       if (result.status === StatusCodes.OK) {
         updateData();
-        setUserData(newUserInitialDate);
+        dispatch(reset());
         setErrorText("Done!");
         handleError();
       } else {
-        setErrorText(result.statusText);
+        const data = await result.json();
+        setErrorText(data.error);
         handleError();
       }
+    } catch (error) {
+      setErrorText("Something in App goes wrong. Please refresh the page.");
+      handleError();
     }
   };
 
@@ -105,20 +100,17 @@ const App: React.FC = () => {
       <h1>AB Test Real</h1>
       <main>
         <Table data={tableData} className="app-table" />
-        <div className="app_block">
-          <div className="app-input_block">
-            <label>Date Registration</label>
-            <DateInput onChange={handleChange(EDate.REGISTRATION)} />
+        <div className={clsx("app_block-user_block", "app-by_center")}>
+          <h4 className="app-user_block-title">User Input</h4>
+          <div className={clsx("app-user_block", "app-user_block-label")}>
+            <div>Date Registration</div>
+            <div>Date Last Activity</div>
           </div>
-          <div className="app-input_block">
-            <label>Date Last Activity</label>
-            <DateInput onChange={handleChange(EDate.ACTIVITY)} />
-          </div>
-          <Button
-            onClick={handleSetUser}
-            className="user_button"
-            value="add user"
-          />
+          {[...Array(MAX_NEW_USER)].map((_, index) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <UserBlock id={index} key={`index-${index}`} />
+          ))}
+          <Button onClick={handleSetUser} value="save" />
         </div>
         <div className="app_block">
           <label>Rolling Retention X day:</label>

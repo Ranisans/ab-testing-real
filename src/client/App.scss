@@ -20,9 +20,15 @@ h1 {
     margin: 0 auto;
   }
 
+  &-by_center {
+    width: max-content;
+    margin: 0 auto;
+  }
+
   &_block {
     display: flex;
     align-items: center;
+    justify-content: space-around;
 
     margin-top: 20px;
 
@@ -34,14 +40,48 @@ h1 {
       size: 14px;
     }
 
+    &-user_block {
+      display: flex;
+      flex-direction: column;
+
+      margin-top: 15px;
+
+      gap: 5px;
+    }
+
     &-rolling-retention {
-      width: 50px;
+      min-width: 50px;
       height: 20px;
 
       color: $textColor;
       border-radius: 20px;
 
       text-align: center;
+    }
+  }
+
+  &-user_block {
+    display: grid;
+
+    gap: 5px;
+    grid-template-columns: repeat(2, 196px);
+
+    &-title {
+      color: $textColor;
+      margin: 0;
+      text-align: center;
+    }
+
+    & input {
+      width: 196px;
+    }
+
+    &-label {
+      & div {
+        color: $textColor;
+
+        text-align: center;
+      }
     }
   }
 

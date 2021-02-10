@@ -8,3 +8,5 @@ export const TABLE_COLUMN: IColumn[] = [
   { label: "Date Registration", dataKey: "registrationDate" },
   { label: "Date Last Activity", dataKey: "lastActivityDate" },
 ];
+
+export const MAX_NEW_USER = 5;
