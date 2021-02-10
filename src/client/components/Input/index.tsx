@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -10,15 +10,18 @@ interface IInput {
 }
 
 interface ITextInput extends IInput {
+  textValue?: string;
   onChange: (value: string) => void;
 }
 
 interface IDateInput extends IInput {
+  dateValue?: Date;
   onChange: (value: Date) => void;
 }
 
 export const TextInput: React.FC<ITextInput> = ({
   onChange,
+  textValue,
   className = "",
 }: ITextInput) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,26 +30,24 @@ export const TextInput: React.FC<ITextInput> = ({
   };
   return (
     <div className={clsx("input-field", className)}>
-      <input type="text" onChange={handleChange} />
+      <input type="text" onChange={handleChange} value={textValue} />
     </div>
   );
 };
 
 export const DateInput: React.FC<IDateInput> = ({
   onChange,
+  dateValue,
   className = "",
 }: IDateInput) => {
-  const [startDate, setStartDate] = useState(new Date());
-
   const handleChange = (date: Date) => {
     onChange(date);
-    setStartDate(date);
   };
 
   return (
     <div className={clsx("input-field", className)}>
       <DatePicker
-        selected={startDate}
+        selected={dateValue}
         dateFormat="dd-MM-yyy"
         onChange={handleChange}
       />
