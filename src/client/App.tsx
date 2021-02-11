@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import clsx from "clsx";
 
 import Table from "./components/Table";
-import { DateInput } from "./components/Input";
 import Button from "./components/Button";
 import ErrorWindow from "./components/ErrorWindow";
 import { IRowData } from "./types";
@@ -21,7 +20,6 @@ const App: React.FC = () => {
   const dispatch = useDispatch();
   const usersData = useSelector((state: AppState) => state.usersDataState);
   const [rollingRetention, setRollingRetention] = useState("");
-  const [retentionDay, setRelationDay] = useState(new Date());
   const [tableData, setTableData] = useState<IRowData[]>([]);
   const [showError, setShowError] = useState(false);
   const [errorText, setErrorText] = useState("");
@@ -41,9 +39,14 @@ const App: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  const updateAppData = () => {
     updateData();
+    handleCalculate();
     dispatch(reset());
+  };
+
+  useEffect(() => {
+    updateAppData();
   }, []);
 
   const handleSetUser = async () => {
@@ -66,8 +69,7 @@ const App: React.FC = () => {
         body: JSON.stringify({ data: usersData }),
       });
       if (result.status === StatusCodes.OK) {
-        updateData();
-        dispatch(reset());
+        updateAppData();
         setErrorText("Done!");
         handleError();
       } else {
@@ -82,9 +84,7 @@ const App: React.FC = () => {
   };
 
   const handleCalculate = async () => {
-    const result = await fetch(
-      `/report/rolling?date=${retentionDay.toISOString()}`
-    );
+    const result = await fetch(`/report/rolling`);
     if (result.status === StatusCodes.OK) {
       const newData = await result.json();
       const data = parseFloat(newData.data).toFixed(2);
@@ -112,16 +112,9 @@ const App: React.FC = () => {
           ))}
           <Button onClick={handleSetUser} value="save" />
         </div>
-        <div className="app_block">
-          <label>Rolling Retention X day:</label>
-          <p className="app_block-rolling-retention">{rollingRetention}</p>
-          <label>Date:</label>
-          <DateInput onChange={setRelationDay} />
-          <Button
-            onClick={handleCalculate}
-            className="calculate_button"
-            value="calculate"
-          />
+        <div className="app_block app_block-retention">
+          <label>Rolling Retention 7 day:</label>
+          <p className="app_block-rolling-retention">{rollingRetention} %</p>
         </div>
       </main>
       <ErrorWindow

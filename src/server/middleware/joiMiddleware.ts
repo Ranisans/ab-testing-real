@@ -31,8 +31,4 @@ export const createUsersSchema = Joi.object({
   data: Joi.array().items(user),
 });
 
-export const getRollingReportSchema = Joi.object({
-  date: Joi.date().required(),
-});
-
 export default middleware;

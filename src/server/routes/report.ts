@@ -2,33 +2,23 @@ import { Router } from "express";
 import HttpStatus, { StatusCodes, getReasonPhrase } from "http-status-codes";
 
 import getConnection from "../db/connection";
-import joiMiddleware, {
-  getRollingReportSchema,
-} from "../middleware/joiMiddleware";
-import convertDate from "../../core/dateConverter";
 
 const router = Router();
 
-router.get(
-  "/rolling",
-  joiMiddleware(getRollingReportSchema, true),
-  async (req, res) => {
-    try {
-      const { date: strDate } = req.query;
-      const date = convertDate(new Date(strDate as string), true);
-      const conn = getConnection();
-      const sql =
-        "SELECT (SELECT COUNT(*) FROM user WHERE lastActivityDate >= ?) / (SELECT COUNT(*) FROM user WHERE registrationDate <= ?) * 100 as result";
-      conn.query(sql, [date, date], (error, result) => {
-        if (error) throw error;
-        res.send({ data: result[0].result }).status(HttpStatus.OK);
-      });
-    } catch (error) {
-      res
-        .status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR) });
-    }
+router.get("/rolling", async (req, res) => {
+  try {
+    const conn = getConnection();
+    const sql =
+      "SELECT (SELECT count(*) FROM `user` WHERE DATEDIFF(lastActivityDate, registrationDate) > 7) / (SELECT count(*) FROM `user` WHERE DATEDIFF(NOW(), registrationDate) > 7) * 100 as result";
+    conn.query(sql, (error, result) => {
+      if (error) throw error;
+      res.send({ data: result[0].result }).status(HttpStatus.OK);
+    });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR) });
   }
-);
+});
 
 export default router;
